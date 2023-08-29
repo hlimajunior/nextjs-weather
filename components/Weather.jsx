@@ -2,11 +2,16 @@ import Image from 'next/image';
 import React from 'react';
 
 const Weather = ({ data }) => {
+
+  const sunrise = horarios(data.sys.sunrise, false); // Saída formatada da data/hora
+  const sunset = horarios(data.sys.sunset, false); // Saída formatada da data/hora
+
+
   console.log(data);
   return (
-    <div className='relative flex flex-col justify-between max-w-[500px] w-full h-[90vh] m-auto p-4 text-gray-300 z-10'>
+    <div className='relative flex flex-col justify-between  min-w-[50%] max-w-[60%] w-full h-[90vh] m-auto p-4 text-gray-200 z-10'>
       {/* Top */}
-      <div className='relative flex justify-between pt-12'>
+      <div className='relative flex justify-between pt-2'>
         <div className='flex flex-col items-center'>
           <Image
             src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
@@ -20,26 +25,65 @@ const Weather = ({ data }) => {
       </div>
       {/* Bottom */}
 
-<div className='bg-black/50 relative p-8 rounded-md'>
-    <p className='text-2xl text-center pb-6'>Weather in {data.name}</p>
-    <div className='flex justify-between text-center'>
-        <div>
+      <div className='bg-black/50 relative p-8 rounded-md '>
+        <p className='text-2xl text-center pb-6'>Tempo em {data.name} {data.sys.country}</p>
+        <div className='flex flex-wrap justify-evenly text-center w-full  text-cyan-200'>
+          <div>
             <p className='font-bold text-2xl'>{data.main.feels_like.toFixed(0)}&#176;</p>
-            <p className='text-xl'>Feels Like</p>
-        </div>
-        <div>
+            <p className='text-xl'>Sensação</p>
+          </div>
+          <div>
             <p className='font-bold text-2xl'>{data.main.humidity}%</p>
-            <p className='text-xl'>Humidity</p>
+            <p className='text-xl'>Umidade</p>
+          </div>
+          <div>
+            <p className='font-bold text-2xl'>{data.wind.deg.toFixed(0)} graus {data.wind.speed.toFixed(0)} km/h </p>
+            <p className='text-xl'>Vento</p>
+          </div>
         </div>
-        <div>
-            <p className='font-bold text-2xl'>{data.wind.speed.toFixed(0)} MPH</p>
-            <p className='text-xl'>Winds</p>
+        <div className='relative w-full flex justify-evenly text-yellow-200' >
+            <div>
+              <p className='font-bold text-2xl'>{sunrise} </p>
+              <p className='text-xl'>Nascer do Sol</p>
+            </div>
+            <div>
+              <p className='font-bold text-2xl'>{sunset} </p>
+              <p className='text-xl'>Pôr do Sol</p>
+            </div>
         </div>
-    </div>
-</div>
+      </div>
 
     </div>
   );
 };
 
 export default Weather;
+
+function horarios(data, showDate) {
+  const unixTimestamp = data; // Exemplo do valor numérico
+
+
+  // Converter o Unix timestamp para milissegundos multiplicando por 1000
+  const timestampInMilliseconds = unixTimestamp * 1000;
+
+  // Criar uma instância de Date a partir do carimbo de data/hora em milissegundos
+  const dataHora = new Date(timestampInMilliseconds);
+
+  // Extrair as partes da data/hora
+  const ano = dataHora.getFullYear();
+  const mes = dataHora.getMonth() + 1; // Os meses são indexados de 0 a 11
+  const dia = dataHora.getDate();
+  const horas = dataHora.getHours();
+  const minutos = dataHora.getMinutes();
+  const segundos = dataHora.getSeconds();
+
+  // Formatar as partes da data/hora
+
+
+
+  const dataHoraFormatada = showDate ? `${dia}/${mes}/${ano} ${horas}:${minutos}` : `${horas}:${minutos}`;
+
+  console.log(dataHoraFormatada); // Saída formatada da data/hora
+  return dataHoraFormatada;
+}
+
